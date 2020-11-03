@@ -286,10 +286,9 @@ def prepare_sheet_for_com_and_office(target_wb, target_sheet, filename, row_inde
 
     target_area_list = []
     for a in area_list:
-        with open('id_region_lookup_commercial_office.json', 'r') as file:
-            id_region_lookup_commercial_office = json.load(file)
-
         if mode_selection == 'single':
+            with open('id_region_lookup_commercial_office_single.json', 'r') as file:
+                id_region_lookup_commercial_office = json.load(file)
             for region_id, region_list in id_region_lookup_commercial_office.items():
                 found_region = False
 
@@ -302,6 +301,8 @@ def prepare_sheet_for_com_and_office(target_wb, target_sheet, filename, row_inde
                 if found_region:
                     break
         else:
+            with open('id_region_lookup_commercial_office_multiple.json', 'r') as file:
+                id_region_lookup_commercial_office = json.load(file)
             for region_id, region_list in id_region_lookup_commercial_office.items():
                 for reg in region_list:
                     if a == reg:
@@ -440,11 +441,10 @@ def prepare_sheet_for_residential(target_wb, target_sheet, filename, row_index, 
 
     target_area_list = []
     for a in area_list:
-        with open('id_region_lookup_residential.json', 'r') as file:
-            id_region_lookup_residential = json.load(file)
-
-        for region_id, region_list in id_region_lookup_residential.items():
-            if mode_selection == 'single':
+        if mode_selection == 'single':
+            with open('id_region_lookup_residential_single.json', 'r') as file:
+                id_region_lookup_residential = json.load(file)
+            for region_id, region_list in id_region_lookup_residential.items():
                 found_region = False
 
                 for reg in region_list:
@@ -455,7 +455,10 @@ def prepare_sheet_for_residential(target_wb, target_sheet, filename, row_index, 
 
                 if found_region:
                     break
-            else:
+        else:
+            with open('id_region_lookup_residential_multiple.json', 'r') as file:
+                id_region_lookup_residential = json.load(file)
+            for region_id, region_list in id_region_lookup_residential.items():
                 for reg in region_list:
                     if a == reg:
                         target_area_list.append(str(region_id))
