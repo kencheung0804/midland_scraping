@@ -53,9 +53,9 @@ def main():
                         prepare_sheet_for_residential(target_wb, target_sheet, filename, row_index, t, usage, area_list, start_date,
                                                       end_date, usage_price_dict, target_prop_name, result_wb_path, residential_token, mode_selection, max_comb_number)
 
-        for column_name in column_name_list:
-            if target_sheet[f'{column_name}{row_index}'].value is None:
-                target_sheet[f'{column_name}{row_index}'] = 'NA'
+        # for column_name in column_name_list:
+        #     if target_sheet[f'{column_name}{row_index}'].value is None:
+        #         target_sheet[f'{column_name}{row_index}'] = 'NA'
                 
         row_index += 1
 
@@ -269,11 +269,11 @@ def request_miland_commercial_data(tx, target_area, start_date, end_date, ics_ty
             new_end_date = str(new_end_date.date())
             return request_miland_commercial_data(tx, target_area, start_date, new_end_date, ics_type, usage_price_dict, usage, t, max_trials, comb_number, original_start_date, original_end_date)
         else:
+            if comb_number>3:
+                comb_number -= 1
+                return request_miland_commercial_data(tx, target_area, original_start_date, original_end_date, ics_type, usage_price_dict, usage, t, 3, comb_number, original_start_date, original_end_date)
             return [None, None]
     else:
-        if comb_number>3:
-            comb_number -= 1
-            return request_miland_commercial_data(tx, target_area, original_start_date, original_end_date, ics_type, usage_price_dict, usage, t, max_trials, comb_number, original_start_date, original_end_date)
         return [final_result, final_comb]
 
 
@@ -423,15 +423,15 @@ def request_miland_residential_data(tx, target_area, start_date, end_date, usage
 
     while (final_result is None or final_comb is None) and (max_trials >= 0):
         if max_trials > 0:
-            start_date = start_date + relativedelta(months=-3)
+            start_date = start_date + relativedelta(months=-1)
         else:
             end_date = end_date + relativedelta(months=1)
         final_result, final_comb = find_result_and_combo()
         max_trials -= 1
 
-    if comb_number > 3:
+    if (comb_number > 3) and (final_result is None) and (final_comb is None):
         comb_number -= 1
-        return request_miland_residential_data(tx, target_area, original_start_date, original_end_date, usage_price_dict, usage, t, max_trials, token, comb_number, original_start_date, original_end_date)
+        return request_miland_residential_data(tx, target_area, original_start_date, original_end_date, usage_price_dict, usage, t, 3, token, comb_number, original_start_date, original_end_date)
 
     return final_result, final_comb
 
@@ -624,8 +624,8 @@ result_col_dict = {
 
 tx_type = ['rental', 'selling']
 
-column_name_list = ['S', 'T', 'U', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AE', 'AF',
-                    'AG', 'AH', 'AI', 'AJ', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT']
+# column_name_list = ['S', 'T', 'U', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AE', 'AF',
+#                     'AG', 'AH', 'AI', 'AJ', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT']
 
 
 class NoDriverError(Exception):
